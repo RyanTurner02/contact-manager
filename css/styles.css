@@ -1,4 +1,11 @@
-body 
+* {
+    /*border: 1px solid red;*/
+    margin: 0;
+    padding: 0;
+}
+
+/*
+body
 {
     background-color: #707070;
 }
@@ -137,4 +144,29 @@ select{
     margin-bottom: 1%;
     font-family: 'Ubuntu', sans-serif;
     color: #95060a;
+}
+*/
+
+.subtitle {
+    color: white;
+    position: relative;
+    bottom: 28px;
+    left: 5px;
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    .row {
+        height: 100vh;
+    }
+
+    #background-image {
+        z-index: 1;
+    }
+
+    #account-form {
+        margin-top: 25%;
+        background-color: white;
+        z-index: 2;
+    }
 }

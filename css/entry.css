@@ -1,0 +1,27 @@
+
+/* Background image subtitle */
+.subtitle {
+    color: white;
+    position: relative;
+    bottom: 28px;
+    left: 5px;
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    .row {
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    #background-image {
+        height: 100%;
+        z-index: 1;
+    }
+
+    #account-form {
+        margin-top: 25%;
+        background-color: white;
+        z-index: 2;
+    }
+}

@@ -3,6 +3,28 @@
     padding: 0;
 }
 
+.home-bg {
+    background-image: url("../images/etst.jpg");
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+    width: 100vw;
+    height: 50vw;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color:white;
+}
+
+.home-nav {
+    padding: 1vw;
+    color: white;
+}
+
+.logo-home {
+    height: 3vw;
+    padding: 0.5vw;
+}
+
 div.contact-list {
     padding-left: 1.3vw;
 }

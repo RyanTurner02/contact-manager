@@ -24,7 +24,7 @@
 		returnWithError($conn->connect_error);
 	} else {
         // check Name for errors
-        if(($Name == "") || (!filter_var($Name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/"))))) {
+        if($Name == "" || !filter_var($Name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[a-zA-Z\s]+$/")))) {
             $errName = "Error: Invalid Name";
         } else {
             // Name is ok, ready to proceed further
@@ -32,27 +32,28 @@
         }
         
         // check Email for errors
-        if($Email == ""){
+        if($Email == "") {
             $errEmail = "Error: Invalid Email";     
         } else {
             // Email ok, move to Phone
             echo "Email added successfully";
         }
-        
+
         // check Phone for errors
-        if($Phone = "" || !filter_var($Phone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+        if($Phone == "" || !filter_var($Name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z]/")))) {
             $errPhone = "Error: Invalid Phone";     
+            echo $Phone;
         } else {
             // Phone is ok
-            echo "Phone added successfully";
+            echo "Phone added successfully ";
         }
 
-        // check UserID Phone for errors
-        if($UserID = "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
-            $errPhone = "Error: Invalid UserID";     
+        // check UserID for errors
+        if($UserID == "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]+$/")))) {
+            $errUserID = "Error: Invalid UserID ";    
         } else {
-            // UserID Phone is ok
-            echo "UserID added successfully";
+            // UserID is ok
+            echo "UserID added successfully ";
         }
         
         // now input data into database as long as no errors
@@ -66,11 +67,8 @@
             // add the contact to the database
             if($stmt->execute()){
                 // contact successfully created
-
-                // TODO: Link front end here
-                // might need to do this w JSON wrapper functions
-                header("location: index.html");
-                exit();
+                // link back to front end
+                returnWithError("");
             } else{
                 echo "Contact data had no errors but SQL failed to add it to the database";
             }

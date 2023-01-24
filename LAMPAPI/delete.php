@@ -11,6 +11,13 @@
     $Phone = $inData["Phone"];
     $UserID = $inData["UserID"];
 
+    //---
+    $Name = "testName1";
+    $Email = "test1@gmail.com";
+    $Phone = "";
+    $UserID = "0";
+    //---
+
     // connect to the server
 	$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331"); 	
 	if( $conn->connect_error )
@@ -34,7 +41,7 @@
         }
         
         // check Phone for errors
-        if($Phone = "" || !filter_var($Phone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+        if($Phone == "" || !filter_var($Phone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z]/")))) {
             $errPhone = "Error: Invalid Phone";     
         } else {
             // Phone is ok
@@ -42,7 +49,7 @@
         }
 
         // check UserID for errors
-        if($UserID = "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+        if($UserID == "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^/")))) {
             $errPhone = "Error: Invalid UserID";     
         } else {
             // UserID is ok
@@ -50,7 +57,10 @@
         }
 
         //if data is ok, delete it
-        if( ($errName == "") && ($errEmail == "") && ($errPhone == "") && ($errUserID == "")) {
+        echo $Name;
+        echo $Phone;
+        echo $UserID;
+        if( ($errName == "") && ($errEmail == "") && $errPhone == "" && $errUserID == "") {
 
             // delete statmenet to send to SQL server
             $stmt = "DELETE FROM Contacts WHERE Name = ? AND Phone = ? AND Email = ? AND UserID = ?";
@@ -60,10 +70,8 @@
             if($stmt->execute()) {
 
                 // successfully removed contact
-                
-                // html page to redirect to
-                header("location: index.html");
-                exit();
+                // send back to front end
+                returnWithError("");
             } else {
                 echo "Contact data had no errors but SQL failed to add it to the database";
             }

@@ -12,6 +12,13 @@
     $UserID = $inData["UserID"];
     $id = $inData["id"];
 
+    // test ---
+    $newName = "UpdatedTestName";
+    $newEmail = "Updatedtest@gmail.com";
+    $newPhone = "890-1234";
+    $UserID = "3";
+    // test ---
+
     // variables to track errors
     $errNewName = "";
     $errNewEmail = "";
@@ -28,7 +35,7 @@
     } else {
 
         // check Name
-        if($newName == "" ||!filter_var($newName, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))) {
+        if($newName == "" ||!filter_var($newName, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[a-zA-Z\s]+$/")))) {
             $errNewName = "Error: Invalid Name";
         } else {
             echo "Name successfully updated";
@@ -43,19 +50,19 @@
         }
         
         // check Phone for errors
-        if($newPhone == "" || !filter_var($newPhone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+        if($newPhone == "" || !filter_var($newPhone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[^a-zA-Z\s]+$/")))) {
             $errNewPhone = "Error: Invalid Phone";     
         } else {
             // Phone is ok
-            echo "Phone added successfully";
+            echo "Phone Updated successfully";
         }
 
         // check userID
-        if($UserID == "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+        if($UserID == "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]+$/")))) {
             $errUserID = "Error: Invalid UserID";     
         } else {
             // Phone is ok
-            echo "UserID added successfully";
+            echo "UserID Updated successfully";
         }
 
         // now input data into database as long as no errors
@@ -69,10 +76,10 @@
             // add the contact to the database
             if($stmt->execute()){
                 // contact successfully created
-
+                
                 // TODO: Link front end here
                 // might need to do this w JSON wrapper functions
-                header("location: index.html");
+                header("location: ../color.html");
                 exit();
             } else {
                 echo "Contact data had no errors but SQL failed to add it to the database";

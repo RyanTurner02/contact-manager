@@ -2,53 +2,109 @@
     // this file is where the delete
     // feature will be implemented
 
-    // Include config file
-    require_once "config.php";
+    // get data from frontend
+	$inData = getRequestInfo();
+    
+    // variables to hold contact data
+    $Name = $inData["Name"];
+    $Email = $inData["Email"];
+    $Phone = $inData["Phone"];
+    $UserID = $inData["UserID"];
 
-    // pull ID of contact to delete from front end
-    if(isset($_POST["id"]) && ($_POST["id"]) != "") {
+    // connect to the server
+	$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331"); 	
+	if( $conn->connect_error )
+	{
+		returnWithError($conn->connect_error);
+	} else {
+         // check Name for errors
+         if(($Name == "") || (!filter_var($Name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/"))))) {
+            $errName = "Error: Invalid Name";
+        } else {
+            // Name is ok, ready to proceed further
+            echo "Name found successfully";
+        }
         
-        // delete statmenet to send to SQL server
-        $sql = "DELETE FROM Contacts WHERE id = ?";
+        // check Email for errors
+        if($Email == ""){
+            $errEmail = "Error: Invalid Email";     
+        } else {
+            // Email ok, move to Phone
+            echo "Email found successfully";
+        }
         
-        if($stmt = mysqli_prepare($link, $sql)) {
+        // check Phone for errors
+        if($Phone = "" || !filter_var($Phone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+            $errPhone = "Error: Invalid Phone";     
+        } else {
+            // Phone is ok
+            echo "Phone found successfully";
+        }
 
-            $ID = trim($_POST["id"]);
-            // bind ID parameter to delete statement
-            mysqli_stmt_bind_param($stmt, "i", $ID);
-            
-            // send SQL delete command 
-            if(mysqli_stmt_execute($stmt)){
-                // delete successful
-                echo "successfully deleted contact";
-                // TO DOO:
-                // redirect to front end page here
+        // check UserID for errors
+        if($UserID = "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+            $errPhone = "Error: Invalid UserID";     
+        } else {
+            // UserID is ok
+            echo "UserID found successfully";
+        }
 
-                // exit file
+        //if data is ok, delete it
+        if( ($errName == "") && ($errEmail == "") && ($errPhone == "") && ($errUserID == "")) {
+
+            // delete statmenet to send to SQL server
+            $stmt = "DELETE FROM Contacts WHERE Name = ? AND Phone = ? AND Email = ? AND UserID = ?";
+            $stmt->bind_param("sssi", $Name, $Email, $Phone, $UserID);
+
+            // execute statement
+            if($stmt->execute()) {
+
+                // successfully removed contact
+                
+                // html page to redirect to
+                header("location: index.html");
                 exit();
             } else {
-                echo "failed to execute SQL delete command";
+                echo "Contact data had no errors but SQL failed to add it to the database";
             }
-        }
-        
-        // finished with SQL statement
-        mysqli_stmt_close($stmt);
-        
-        // finished comms with SQL server, disconnect 
-        mysqli_close($link);
 
-    } else {
-        // either ID does not exist, or
-        // invalid ID sent by user 
-        if(trim($_GET["id"] = "")) {
-            
-            // user failed to enter ID
-            // TO DO:
-            // redirect here or tell user failed
-            /*header("location: error.php");*/
-            
-            echo "Failed to read input ID";
-            exit();
+            // close out statement
+            $stmt->close();
+        } else {
+            // data was not entered properly, so we should not send it to the database
+            echo "Contact information was not entered correctly: ";
+            echo $errName;
+            echo $errEmail;
+            echo $errPhone;
+            echo $errUserID;
         }
-    }
+
+        // close connection
+        $conn->close();
+        
+    } 
+
+    // helper functions for JSON commands
+	function getRequestInfo()
+	{
+		return json_decode(file_get_contents('php://input'), true);
+	}
+
+	function sendResultInfoAsJson( $obj )
+	{
+		header('Content-type: application/json');
+		echo $obj;
+	}
+	
+	function returnWithError( $err )
+	{
+		$retValue = '{"id":0,"firstName":"","lastName":"","error":"' . $err . '"}';
+		sendResultInfoAsJson( $retValue );
+	}
+	
+	function returnWithInfo( $firstName, $lastName, $id )
+	{
+		$retValue = '{"id":' . $id . ',"firstName":"' . $firstName . '","lastName":"' . $lastName . '","error":""}';
+		sendResultInfoAsJson( $retValue );
+	}    
 ?>

@@ -2,57 +2,56 @@
     // this file is where the update
     // feature will be implemented
 
-    // include config
-    require_once "config.php";
-
-    // variables to hold contact info
-    $Name = "";
-    $Email = "";
-    $Phone = "";
-    $UserID = "";
-    $id = "";
+    // get data from frontend
+	$inData = getRequestInfo();
+    
+    // variables to hold contact data
+    $newName = $inData["Name"];
+    $newEmail = $inData["Email"];
+    $newPhone = $inData["Phone"];
+    $UserID = $inData["UserID"];
+    $id = $inData["id"];
 
     // variables to track errors
-    $errName = "";
-    $errEmail = "";
-    $errPhone = "";
+    $errNewName = "";
+    $errNewEmail = "";
+    $errNewPhone = "";
     $errUserID = "";
 
     // once updated contact information is submitted
     // from the front end, find the contact and update it
-    if(isset($_POST["id"]) && ($_POST["id"] != "")){
+    // connect to the server
+	$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331"); 	
+	if( $conn->connect_error )
+	{
+		returnWithError($conn->connect_error);
+    } else {
 
-        // store id into local
-        $id = $_POST["id"];
-        
         // check Name
-        $Name = trim($_POST["Name"]);
-        if($Name == "" ||!filter_var($Name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))) {
-            $Name_err = "Error: Invalid Name";
+        if($newName == "" ||!filter_var($newName, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))) {
+            $errNewName = "Error: Invalid Name";
         } else {
             echo "Name successfully updated";
         }
         
         // check Email
-        $Email = trim($_POST["Email"]);
-        if($Email == "") {
-            $errEmail = "Error: Invalid Email";     
+        if($newEmail == "") {
+            $errNewEmail = "Error: Invalid Email";     
         } else {
             // Email ok, move to Phone
             echo "Email updated successfully";
         }
         
         // check Phone for errors
-        $Phone = trim($_POST["Phone"]);
-        if(empty($Phone) || !filter_var($Phone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
-            $errPhone = "Error: Invalid Phone";     
+        if($newPhone == "" || !filter_var($newPhone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+            $errNewPhone = "Error: Invalid Phone";     
         } else {
             // Phone is ok
             echo "Phone added successfully";
         }
 
         // check userID
-        if(empty($UserID) || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+        if($UserID == "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
             $errUserID = "Error: Invalid UserID";     
         } else {
             // Phone is ok
@@ -60,96 +59,63 @@
         }
 
         // now input data into database as long as no errors
-        if( ($errName == "") && ($errEmail == "") && ($errPhone == "") && ($errUserID == "")) {
+        if( ($errNewName == "") && ($errNewEmail == "") && ($errNewPhone == "") && ($errUserID == "")) {
             
-            // create sql statement to send to database
-            $sql = "UPDATE Contacts SET Name=?, Phone=?, Email=?, UserID=? WHERE id=?";
+            // SQL statement to send data to database
+            $stmt = $conn->prepare("UPDATE Contacts(Name, Phone, Email, UserID) VALUES(?, ?, ?, ?)");
             
-            if($stmt = mysqli_prepare($link, $sql)) {
-
-                // bind variables to sql parameters
-                mysqli_stmt_bind_param($stmt, "ssssi", $Name, $Phone, $Email, $UserID, $id);
+            $stmt->bind_param("sssi", $newName, $newPhone, $newEmail, $UserID);
                 
-                // update the sql database and send to front end
-                if(mysqli_stmt_execute($stmt)){
-                    
-                    // update finished successfully
-                    // TO DO:
-                    // send user to search page?
-                    /*header("location: index.php");*/
+            // add the contact to the database
+            if($stmt->execute()){
+                // contact successfully created
 
-                    // finished updating, exit
-                    exit();
-                } else {
-                    echo "Failed to execute SQL statement when attempting to update contact";
-                }
+                // TODO: Link front end here
+                // might need to do this w JSON wrapper functions
+                header("location: index.html");
+                exit();
+            } else {
+                echo "Contact data had no errors but SQL failed to add it to the database";
             }
             
             // finished with statement, so close it 
-            mysqli_stmt_close($stmt);
+            $stmt->close();
+        } else {
+            // data was not entered properly, so we should not send it to the database
+            echo "Contact information was not entered correctly: ";
+            echo $errNewName;
+            echo $errNewEmail;
+            echo $errNewPhone;
+            echo $errNewUserID;
         }
         
         // disconnect from server 
-        mysqli_close($link);
+        $conn->close();
 
-    } else {
-
-        // either the ID entered was empty, 
-        // or we couldn't get it via the post method
-        // so lets try with the get method
-        if(isset($_GET["id"]) && (trim($_GET["id"]) != "")) {
-
-            // copy the id, we were able to get it
-            $id =  trim($_GET["id"]);
-            
-            // since we couldn't update the contact above,
-            // lets try and select it
-            $sql = "SELECT * FROM Contacts WHERE id = ?";
-            if($stmt = mysqli_prepare($link, $sql)) {
-                // bind tempID to statement to send
-                mysqli_stmt_bind_param($stmt, "i", $id);
-                
-                // try and execute the sql command to the database
-                if(mysqli_stmt_execute($stmt)) {
-                    $result = mysqli_stmt_get_result($stmt);
-        
-                    if(mysqli_num_rows($result) == 1) {
-                        // only one entry in database
-                        $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-                        
-                        //  copy data from entry into local variables
-                        $Name = $row["Name"];
-                        $Phone = $row["Phone"];
-                        $Email = $row["Email"];
-                        $UserID - $row["UserID"];
-                        
-                    } else {
-                        
-                        // TO DO: 
-                        // redirect here, no id found
-                        /*header("location: error.php");*/
-                        exit();
-                    }
-                    
-                } else {
-                    echo "Failed to execute SQL statement when attempting to find contact ID";
-                }
-            }
-            
-            // statement has sent or attempted to send, we are finished 
-            mysqli_stmt_close($stmt);
-            
-            // disconnect from database 
-            mysqli_close($link);
-        }  else {
-            
-            // TO DO:
-            // redirect here, no id found
-            /*header("location: error.php");*/
-
-            // exit program
-            exit();
-        }
     }
+
+    // helper functions for JSON commands
+	function getRequestInfo()
+	{
+		return json_decode(file_get_contents('php://input'), true);
+	}
+
+	function sendResultInfoAsJson( $obj )
+	{
+		header('Content-type: application/json');
+		echo $obj;
+	}
+	
+	function returnWithError( $err )
+	{
+		$retValue = '{"id":0,"firstName":"","lastName":"","error":"' . $err . '"}';
+		sendResultInfoAsJson( $retValue );
+	}
+	
+	function returnWithInfo( $firstName, $lastName, $id )
+	{
+		$retValue = '{"id":' . $id . ',"firstName":"' . $firstName . '","lastName":"' . $lastName . '","error":""}';
+		sendResultInfoAsJson( $retValue );
+	}
 
 ?>

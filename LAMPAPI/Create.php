@@ -6,62 +6,68 @@
     require_once "config.php";
     
     // variables to hold contact data
-    $name = "";
-    $email = "";
-    $number = "";
+    $Name = "";
+    $Email = "";
+    $Phone = "";
+    $UserID = "";
 
     // variables to  hold error data
     $errName = "";
     $errEmail = "";
-    $errNumber = "";
+    $errPhone = "";
+    $errUserID = "";
     
     // process data from front end
     // TO DO: get request method to input here
     // do we need to use JSON wrappers for that?
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         
-        // check name for errors
-        $name = trim($_POST["name"]);
-        if(($name == "") || (!filter_var($name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/"))))) {
+        // check Name for errors
+        $Name = trim($_POST["Name"]);
+        if(($Name == "") || (!filter_var($Name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/"))))) {
             $errName = "Error: Invalid Name";
         } else {
-            // name is ok, ready to proceed further
+            // Name is ok, ready to proceed further
             echo "Name added successfully";
         }
         
-        // check email for errors
-        $email = trim($_POST["email"]);
-        if($email == ""){
+        // check Email for errors
+        $Email = trim($_POST["Email"]);
+        if($Email == ""){
             $errEmail = "Error: Invalid Email";     
         } else {
-            // Email ok, move to number
-            echo "email added successfully";
+            // Email ok, move to Phone
+            echo "Email added successfully";
         }
         
-        // check number for errors
-        $number = trim($_POST["number"]);
-        if(empty($number) || !filter_var($number, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
-            $errNumber = "Error: Invalid Number";     
+        // check Phone for errors
+        $Phone = trim($_POST["Phone"]);
+        if(empty($Phone) || !filter_var($Phone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+            $errPhone = "Error: Invalid Phone";     
         } else {
-            // number is ok
-            echo "Number added successfully";
+            // Phone is ok
+            echo "Phone added successfully";
+        }
+
+        // check UserID Phone for errors
+        $UserID = trim($_POST["userID"]);
+        if(empty($UserID) || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+            $errPhone = "Error: Invalid UserID";     
+        } else {
+            // UserID Phone is ok
+            echo "UserID added successfully";
         }
         
         // now input data into database as long as no errors
-        if( ($errName == "") && ($errEmail == "") && ($errNumber == "")){
+        if( ($errName == "") && ($errEmail == "") && ($errPhone == "") && ($errUserID == "")){
 
             // SQL statement to send data to database
-            $sql = "INSERT INTO contacts (name, address, number) VALUES (?, ?, ?)";
+            $sql = "INSERT INTO Contacts (Name, Phone, Email, UserID) VALUES (?, ?, ?)";
             
             if($stmt = mysqli_prepare($link, $sql)){
                 
 
-                mysqli_stmt_bind_param($stmt, "sss", $tempName, $tempEmail, $tempNumber);
-                
-                // set sql params equal to data
-                $tempName = $name;
-                $tempEmail = $email;
-                $tempNumber = $number;
+                mysqli_stmt_bind_param($stmt, "ssss", $Name, $Phone, $Email, $UserID);
                 
                 // add the contact to the database
                 if(mysqli_stmt_execute($stmt)){
@@ -84,7 +90,8 @@
             echo "Contact information was not entered correctly: ";
             echo $errName;
             echo $errEmail;
-            echo $errNumber;
+            echo $errPhone;
+            echo $errUserID;
         }
         
         // finished comms with sql server, break communication

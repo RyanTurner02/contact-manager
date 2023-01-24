@@ -6,15 +6,17 @@
     require_once "config.php";
 
     // variables to hold contact info
-    $name = "";
-    $email = "";
-    $number = "";
+    $Name = "";
+    $Email = "";
+    $Phone = "";
+    $UserID = "";
     $id = "";
 
     // variables to track errors
     $errName = "";
     $errEmail = "";
-    $errNumber = "";
+    $errPhone = "";
+    $errUserID = "";
 
     // once updated contact information is submitted
     // from the front end, find the contact and update it
@@ -23,52 +25,52 @@
         // store id into local
         $id = $_POST["id"];
         
-        // check name
-        $name = trim($_POST["name"]);
-        if($name == "" ||!filter_var($name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))) {
-            $name_err = "Error: Invalid Name";
+        // check Name
+        $Name = trim($_POST["Name"]);
+        if($Name == "" ||!filter_var($Name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))) {
+            $Name_err = "Error: Invalid Name";
         } else {
             echo "Name successfully updated";
         }
         
-        // check email
-        $email = trim($_POST["email"]);
-        if($email == "") {
+        // check Email
+        $Email = trim($_POST["Email"]);
+        if($Email == "") {
             $errEmail = "Error: Invalid Email";     
         } else {
-            // Email ok, move to number
-            echo "email updated successfully";
+            // Email ok, move to Phone
+            echo "Email updated successfully";
         }
         
-        // Validate number
-        // check number for errors
-        $number = trim($_POST["number"]);
-        if(empty($number) || !filter_var($number, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
-            $errNumber = "Error: Invalid Number";     
+        // check Phone for errors
+        $Phone = trim($_POST["Phone"]);
+        if(empty($Phone) || !filter_var($Phone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+            $errPhone = "Error: Invalid Phone";     
         } else {
-            // number is ok
-            echo "Number added successfully";
+            // Phone is ok
+            echo "Phone added successfully";
         }
-        
+
+        // check userID
+        if(empty($UserID) || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]^+$/")))) {
+            $errUserID = "Error: Invalid UserID";     
+        } else {
+            // Phone is ok
+            echo "UserID added successfully";
+        }
+
         // now input data into database as long as no errors
-        if( ($errName == "") && ($errEmail == "") && ($errNumber == "")) {
+        if( ($errName == "") && ($errEmail == "") && ($errPhone == "") && ($errUserID == "")) {
             
             // create sql statement to send to database
-            $sql = "UPDATE contacts SET name=?, email=?, number=? WHERE id=?";
+            $sql = "UPDATE Contacts SET Name=?, Phone=?, Email=?, UserID=? WHERE id=?";
             
             if($stmt = mysqli_prepare($link, $sql)) {
 
                 // bind variables to sql parameters
-                mysqli_stmt_bind_param($stmt, "sssi", $tempName, $tempEmail, $tempNumber, $tempID);
+                mysqli_stmt_bind_param($stmt, "ssssi", $Name, $Phone, $Email, $UserID, $id);
                 
-                // Set parameters equal to the 
-                // local updated values for our contact
-                $tempName = $name;
-                $tempEmail = $email;
-                $tempNumber = $number;
-                $tempID = $id;
-                
-                // update the sql database 
+                // update the sql database and send to front end
                 if(mysqli_stmt_execute($stmt)){
                     
                     // update finished successfully
@@ -102,13 +104,10 @@
             
             // since we couldn't update the contact above,
             // lets try and select it
-            $sql = "SELECT * FROM contacts WHERE id = ?";
+            $sql = "SELECT * FROM Contacts WHERE id = ?";
             if($stmt = mysqli_prepare($link, $sql)) {
                 // bind tempID to statement to send
-                mysqli_stmt_bind_param($stmt, "i", $tempID);
-                
-                // copy id to the parameter to be sent
-                $tempID = $id;
+                mysqli_stmt_bind_param($stmt, "i", $id);
                 
                 // try and execute the sql command to the database
                 if(mysqli_stmt_execute($stmt)) {
@@ -119,9 +118,11 @@
                         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
                         
                         //  copy data from entry into local variables
-                        $name = $row["name"];
-                        $email = $row["email"];
-                        $number = $row["number"];
+                        $Name = $row["Name"];
+                        $Phone = $row["Phone"];
+                        $Email = $row["Email"];
+                        $UserID - $row["UserID"];
+                        
                     } else {
                         
                         // TO DO: 

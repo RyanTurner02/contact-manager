@@ -9,15 +9,13 @@
     if(isset($_POST["id"]) && ($_POST["id"]) != "") {
         
         // delete statmenet to send to SQL server
-        $sql = "DELETE FROM employees WHERE id = ?";
+        $sql = "DELETE FROM Contacts WHERE id = ?";
         
         if($stmt = mysqli_prepare($link, $sql)) {
 
+            $ID = trim($_POST["id"]);
             // bind ID parameter to delete statement
-            mysqli_stmt_bind_param($stmt, "i", $tempID);
-            
-            // set ID parameter to ID from front end
-            $tempID = trim($_POST["id"]);
+            mysqli_stmt_bind_param($stmt, "i", $ID);
             
             // send SQL delete command 
             if(mysqli_stmt_execute($stmt)){

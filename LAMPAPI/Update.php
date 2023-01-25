@@ -12,13 +12,6 @@
     $UserID = $inData["UserID"];    // we won't update this, since it is always linked to the account that created it
     $id = $inData["id"];            // this is how we will find the right contact to update
 
-    // test ---
-    $newName = "John";
-    $newEmail = "John@mail.com";
-    $newPhone = "555-1234";
-    $id = 3;
-    // test ---
-
     // variables to track errors
     $errNewName = "";
     $errNewEmail = "";
@@ -48,9 +41,9 @@
             // Email ok, move to Phone
             echo "Email updated successfully";
         }
-        
+
         // check Phone for errors
-        if($newPhone == "" || !filter_var($newPhone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]/")))) {
+        if($newPhone == "") {
             $errNewPhone = "Error: Invalid Phone";     
         } else {
             // Phone is ok
@@ -58,10 +51,10 @@
         }
 
         // now input data into database as long as no errors
-        if( ($errNewName == "") && ($errNewEmail == "") && ($errNewPhone == "") && ($errUserID == "")) {
+        if( ($errNewName == "") && ($errNewEmail == "") && ($errNewPhone == "")) {
             
             // SQL statement to send data to database
-            $stmt = $conn->prepare("UPDATE Contacts SET Name, Phone, Email WHERE ID = ?");
+            $stmt = $conn->prepare("UPDATE Contacts SET Name = ?, Phone = ?, Email = ? WHERE ID = ?");
             $stmt->bind_param("sssi", $newName, $newPhone, $newEmail, $id);
                 
             // add the contact to the database
@@ -75,6 +68,7 @@
             
             // finished with statement, so close it 
             $stmt->close();
+
         } else {
             // data was not entered properly, so we should not send it to the database
             echo "Contact information was not entered correctly: ";

@@ -14,6 +14,7 @@
             integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"
             defer></script>
 </head>
+
 <body>
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
@@ -22,53 +23,58 @@
         <button class="btn btn-danger">Sign Out</button>
     </div>
 </nav>
-    
-<div class="add-contact-button">
-    <button class="btn btn-success me-2">Add Contact</button>
 
-    <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search by name, email, or phone number"
-               aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-    </form>
+<div class="add-contact-button">
+    <div class="d-flex justify-content-between">
+        <button class="btn btn-success me-2">Add Contact</button>
+
+        <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search by name, email, or phone"
+                   aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+    </div>
 </div>
 
 <div class="container-fluid contact-list">
-    <table class="table">
-        <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email Address</th>
-            <th>Phone Number</th>
-            <th></th>
-        </tr>
+    <div class="table-responsive-md">
+        <table class="table">
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email Address</th>
+                <th>Phone Number</th>
+                <th></th>
+            </tr>
 
-        <tr>
-            <td>Lorem</td>
-            <td>Ipsum</td>
-            <td>email@example.com</td>
-            <td>123-456-7890</td>
-            <td>
-                <div class="d-flex flex-row justify-content-end">
-                    <button class="btn btn-outline-primary me-1">Edit</button>
-                    <button class="btn btn-outline-danger">Delete</button>
-                </div>
-            </td>
-        </tr>
+            <tr>
+                <td>Lorem</td>
+                <td>Ipsum</td>
+                <td>email@example.com</td>
+                <td>123-456-7890</td>
+                <td>
+                    <div class="btn-group d-flex justify-content-end">
+                        <button class="btn btn-outline-primary">Edit</button>
+                        <button class="btn btn-outline-danger">Delete</button>
+                    </div>
+                </td>
+            </tr>
 
-        <tr>
-            <td>Lorem</td>
-            <td>Ipsum</td>
-            <td>email@example.com</td>
-            <td>123-456-7890</td>
-            <td>
-                <div class="d-flex flex-row justify-content-end">
-                    <button class="btn btn-outline-primary me-1">Edit</button>
-                    <button class="btn btn-outline-danger">Delete</button>
-                </div>
-            </td>
-        </tr>
-    </table>
+            <tr>
+                <td>Lorem</td>
+                <td>Ipsum</td>
+                <td>email@example.com</td>
+                <td>123-456-7890</td>
+                <td>
+                    <div class="btn-group d-flex justify-content-end">
+                        <button class="btn btn-outline-primary">Edit</button>
+                        <button class="btn btn-outline-danger">Delete</button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
 </body>
+
 </html>

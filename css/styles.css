@@ -16,12 +16,17 @@
 }
 
 .home-nav {
-    padding: 1vw;
     color: white;
 }
 
+.home-nav:hover {
+    color: lightgray;
+}
+
 .logo-home {
-    height: 3vw;
+    width: 12.5%;
+    height: auto;
+    margin-right: 0.5vw;
     padding: 0.5vw;
 }
 

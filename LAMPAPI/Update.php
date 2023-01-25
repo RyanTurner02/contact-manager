@@ -9,14 +9,14 @@
     $newName = $inData["Name"];
     $newEmail = $inData["Email"];
     $newPhone = $inData["Phone"];
-    $UserID = $inData["UserID"];
-    $id = $inData["id"];
+    $UserID = $inData["UserID"];    // we won't update this, since it is always linked to the account that created it
+    $id = $inData["id"];            // this is how we will find the right contact to update
 
     // test ---
-    $newName = "UpdatedTestName";
-    $newEmail = "Updatedtest@gmail.com";
-    $newPhone = "890-1234";
-    $UserID = "3";
+    $newName = "John";
+    $newEmail = "John@mail.com";
+    $newPhone = "555-1234";
+    $id = 3;
     // test ---
 
     // variables to track errors
@@ -50,37 +50,25 @@
         }
         
         // check Phone for errors
-        if($newPhone == "" || !filter_var($newPhone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[^a-zA-Z\s]+$/")))) {
+        if($newPhone == "" || !filter_var($newPhone, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]/")))) {
             $errNewPhone = "Error: Invalid Phone";     
         } else {
             // Phone is ok
             echo "Phone Updated successfully";
         }
 
-        // check userID
-        if($UserID == "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]+$/")))) {
-            $errUserID = "Error: Invalid UserID";     
-        } else {
-            // Phone is ok
-            echo "UserID Updated successfully";
-        }
-
         // now input data into database as long as no errors
         if( ($errNewName == "") && ($errNewEmail == "") && ($errNewPhone == "") && ($errUserID == "")) {
             
             // SQL statement to send data to database
-            $stmt = $conn->prepare("UPDATE Contacts(Name, Phone, Email, UserID) VALUES(?, ?, ?, ?)");
-            
-            $stmt->bind_param("sssi", $newName, $newPhone, $newEmail, $UserID);
+            $stmt = $conn->prepare("UPDATE Contacts SET Name, Phone, Email WHERE ID = ?");
+            $stmt->bind_param("sssi", $newName, $newPhone, $newEmail, $id);
                 
             // add the contact to the database
             if($stmt->execute()){
                 // contact successfully created
-                
-                // TODO: Link front end here
-                // might need to do this w JSON wrapper functions
-                header("location: ../color.html");
-                exit();
+                // link to front end
+                returnWithError("");
             } else {
                 echo "Contact data had no errors but SQL failed to add it to the database";
             }

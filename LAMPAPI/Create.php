@@ -44,7 +44,7 @@
             $errPhone = "Error: Invalid Phone";     
             echo $Phone;
         } else {
-            // Phone is ok
+            // phone ok, move on
             echo "Phone added successfully ";
         }
 
@@ -55,13 +55,22 @@
             // UserID is ok
             echo "UserID added successfully ";
         }
-        
+
+        // now make sure name does not exist already
+        $stmt = $conn->prepare("SELECT FROM Contacts WHERE Name = ? AND UserID = ?");
+        $stmt->bind_param("si", $Name, $UserID);
+        if($stmt->exeute()) {
+            returnWithError("Contact already exists!");
+        }
+
         // now input data into database as long as no errors
         if( ($errName == "") && ($errEmail == "") && ($errPhone == "") && ($errUserID == "")){
 
+            // before we insert the contact into the DB, we should
+            // first check to make sure they do not already exist
+            
             // SQL statement to send data to database
             $stmt = $conn->prepare("INSERT INTO Contacts(Name, Phone, Email, UserID) VALUES(?, ?, ?, ?)");
-            
             $stmt->bind_param("sssi", $Name, $Phone, $Email, $UserID);
                 
             // add the contact to the database

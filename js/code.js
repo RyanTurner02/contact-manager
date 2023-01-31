@@ -59,6 +59,24 @@ function doLogin()
 	}
 }
 
+function doRegister() {
+	let firstName = document.getElementById("firstname");
+	let lastName = document.getElementById("lastname");
+	let userName = document.getElementById("username");
+	let password = document.getElementById("password");
+
+	// todo: input validation
+
+	let user = {
+		firstName: firstName,
+		lastName: lastName,
+		userName: userName,
+		password: password
+	};
+
+	console.log(JSON.stringify(user));
+}
+
 function saveCookie()
 {
 	let minutes = 20;

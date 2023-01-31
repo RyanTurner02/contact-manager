@@ -62,7 +62,7 @@ function doLogin()
 function doRegister() {
 	let firstName = document.getElementById("firstname").value;
 	let lastName = document.getElementById("lastname").value;
-	let userName = document.getElementById("username").value;
+	let login = document.getElementById("username").value;
 	let password = document.getElementById("password").value;
 
 	// todo: input validation
@@ -70,11 +70,48 @@ function doRegister() {
 	let user = {
 		firstName: firstName,
 		lastName: lastName,
-		userName: userName,
+		login: login,
 		password: password
 	};
 
+	let jsonPayload = JSON.stringify(user);
+
 	console.log(JSON.stringify(user));
+
+	let url = urlBase + '/register.' + extension;
+
+	let xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+	try
+	{
+		xhr.onreadystatechange = function()
+		{
+			if (this.readyState == 4 && this.status == 200)
+			{
+				let jsonObject = JSON.parse( xhr.responseText );
+				userId = jsonObject.id;
+
+				if( userId < 1 )
+				{
+					document.getElementById("loginResult").innerHTML = "Invalid username";
+					return;
+				}
+
+				firstName = jsonObject.firstName;
+				lastName = jsonObject.lastName;
+
+				saveCookie();
+
+				window.location.href = "contacts.html";
+			}
+		};
+		xhr.send(jsonPayload);
+	}
+	catch(err)
+	{
+		document.getElementById("loginResult").innerHTML = err.message;
+	}
 }
 
 function saveCookie()

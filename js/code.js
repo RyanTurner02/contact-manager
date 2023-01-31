@@ -60,10 +60,10 @@ function doLogin()
 }
 
 function doRegister() {
-	let firstName = document.getElementById("firstname");
-	let lastName = document.getElementById("lastname");
-	let userName = document.getElementById("username");
-	let password = document.getElementById("password");
+	let firstName = document.getElementById("firstname").value;
+	let lastName = document.getElementById("lastname").value;
+	let userName = document.getElementById("username").value;
+	let password = document.getElementById("password").value;
 
 	// todo: input validation
 

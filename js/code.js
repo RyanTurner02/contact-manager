@@ -60,8 +60,8 @@ function doLogin()
 }
 
 function doRegister() {
-	let firstName = document.getElementById("firstname").value;
-	let lastName = document.getElementById("lastname").value;
+	firstName = document.getElementById("firstname").value;
+	lastName = document.getElementById("lastname").value;
 	let login = document.getElementById("username").value;
 	let password = document.getElementById("password").value;
 
@@ -76,8 +76,6 @@ function doRegister() {
 
 	let jsonPayload = JSON.stringify(user);
 
-	console.log(JSON.stringify(user));
-
 	let url = urlBase + '/register.' + extension;
 
 	let xhr = new XMLHttpRequest();
@@ -87,30 +85,30 @@ function doRegister() {
 	{
 		xhr.onreadystatechange = function()
 		{
+			if(this.status == 409)
+			{
+				document.getElementById("registerResult").innerHTML = "Invalid username";
+				return;
+			}
+
 			if (this.readyState == 4 && this.status == 200)
 			{
 				let jsonObject = JSON.parse( xhr.responseText );
+
 				userId = jsonObject.id;
-
-				if( userId < 1 )
-				{
-					document.getElementById("loginResult").innerHTML = "Invalid username";
-					return;
-				}
-
 				firstName = jsonObject.firstName;
 				lastName = jsonObject.lastName;
 
 				saveCookie();
 
-				window.location.href = "contacts.html";
+				// window.location.href = "contacts.html";
 			}
 		};
 		xhr.send(jsonPayload);
 	}
 	catch(err)
 	{
-		document.getElementById("loginResult").innerHTML = err.message;
+		document.getElementById("registerResult").innerHTML = err.message;
 	}
 }
 

@@ -87,28 +87,20 @@ function doRegister() {
 		{
 			if(this.status == 409)
 			{
-				document.getElementById("registerResult").innerHTML = "Invalid username";
+				document.getElementById("loginResult").innerHTML = "Invalid username";
 				return;
 			}
 
 			if (this.readyState == 4 && this.status == 200)
 			{
-				let jsonObject = JSON.parse( xhr.responseText );
-
-				userId = jsonObject.id;
-				firstName = jsonObject.firstName;
-				lastName = jsonObject.lastName;
-
-				saveCookie();
-
-				// window.location.href = "contacts.html";
+				doLogin();
 			}
 		};
 		xhr.send(jsonPayload);
 	}
 	catch(err)
 	{
-		document.getElementById("registerResult").innerHTML = err.message;
+		document.getElementById("loginResult").innerHTML = err.message;
 	}
 }
 

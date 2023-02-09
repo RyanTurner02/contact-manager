@@ -229,3 +229,99 @@ function searchColor()
 	}
 	
 }
+
+
+
+function showTable() {
+    var x = document.getElementById("addForm");
+    var contacts = document.getElementById("contactsTable");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+        contacts.style.display = "none";
+    } else {
+        x.style.display = "none";
+        contacts.style.display = "block";
+    }
+}
+
+function addContact() {
+
+    let firstName = document.getElementById("contactTextFirst").value;
+    let lastName = document.getElementById("contactTextLast").value;
+    let phoneNumber = document.getElementById("contactTextNumber").value;
+    let emailAddress = document.getElementById("contactTextEmail").value;
+    
+
+    let tmp = {
+        Name: firstName + "_" + lastName,
+        Phone: phoneNumber,
+        Email: emailAddress,
+        UserID: userId
+    };
+
+
+    let jsonPayload = JSON.stringify(tmp);
+
+    let url = urlBase + '/Create.' + extension;
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+    try {
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("contactAddResult").innerHTML = "Contact has been added";
+                // Clear input fields in form 
+                document.getElementById("addForm").reset();
+                // reload contacts table and switch view to show
+                loadContacts();
+                showTable();
+            }
+        };
+        console.log("Full Name: " + tmp.Name + " Phone: " + tmp.Phone + " Email: " + tmp.Email);
+        xhr.send(jsonPayload);
+    } catch (err) {
+        document.getElementById("contactAddResult").innerHTML = err.message;
+    }
+}
+
+
+
+function loadContacts()
+{
+
+  let url = urlBase + '/SearchContacts.' + extension;
+ 	let xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+ 
+ 	let tmp = {
+   search: "",
+   userId: userId
+  };
+  
+	let jsonPayload = JSON.stringify( tmp );
+  try 
+  {
+    xhr.onreadystatechange = function() 
+    {
+      if (this.readyState == 4 && this.status == 200)
+      {
+        let jsonObject = JSON.parse( xhr.responseText );
+        console.log("Contacts have been loaded.");
+        console.log(jsonObject.results.length);
+        for(let i=0; i<jsonObject.results.length; i++)
+        {
+          console.log(jsonObject.results[i].ID);
+        }
+       
+      }
+    };
+    xhr.send(jsonPayload);
+  }
+ 	catch(err)
+	{
+		//document.getElementById("colorSearchResult").innerHTML = err.message;
+   console.log("Error caught");
+	}
+}

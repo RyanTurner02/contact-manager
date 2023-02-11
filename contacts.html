@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CM - My Contacts</title>
-
+    <script type="text/javascript" src="js/code.js"></script>
     <link href="css/styles.css" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -13,19 +13,22 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"
             defer></script>
+                               
     <script type="text/javascript">
   	  document.addEventListener('DOMContentLoaded', function() 
   	  {
-    	 readCookie();
+    	readCookie();
        loadContacts();
     	}, false);
 	  </script>
+ 
 </head>
 
 <body>
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">Contact Manager</span>
+    
+        <span class="navbar-brand mb-0 h1"><img src="images/logo-dark.png" class="logo-contact" alt="Contact Manager Logo">Community Manager</span>
 
         <button class="btn btn-danger" onclick="doLogout()">Sign Out</button>
     </div>
@@ -38,15 +41,19 @@
         </div>
 
         <div class="col-md-9 col-lg-8 col-12">
-            <form class="d-flex justify-content-around" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search by name, email, or phone"
-                       aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
+          <div class="d-flex justify-content-around" role="search">
+              <input class="form-control me-2" type="text" placeholder="Search" aria-label="Search" id="searchBar" onkeyup="searchContacts(this)">
+              <button type="button" class="btn btn-outline-success" onClick="searchContacts()">Search</button>
+              <button id="toRefreshSpace" type="button" class="btn btn-outline-success" onClick="refreshContacts()">Refresh</button>
+              <script>
+                document.getElementById("toRefreshSpace").id = 'refreshSpacer';
+              </script>
+          </div>
         </div>
     </div>
 </div>
-    
+
+
 <div class="collapse" id="collapseForm">
   <div class="d-flex justify-content-center addContacts mb-2">
 			<form class="row" id="addForm" action="" method="post">
@@ -57,10 +64,10 @@
           <input type="text" class="form-control" id="contactTextLast" placeholder="Last Name" required>
         </div>
         <div class="col">
-          <input type="text" class="form-control" id="contactTextNumber" placeholder="XXX-XXX-XXXX" required>
+          <input type="text" class="form-control" id="contactTextEmail" placeholder="name@email.com" required>
         </div>
         <div class="col">
-          <input type="text" class="form-control" id="contactTextEmail" placeholder="name@email.com" required>
+          <input type="text" class="form-control" id="contactTextNumber" placeholder="(XXX) XXX-XXXX" required>
         </div>
         <div class="col">
           <button type="button" id="addContactButton" class="btn btn-outline-success mb-2" onclick="addContact()">Add Contact</button>
@@ -70,44 +77,12 @@
 </div>
 
 <div class="container-fluid contact-list">
-    <div class="table-responsive-md">
-        <table class="table">
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email Address</th>
-                <th>Phone Number</th>
-                <th></th>
-            </tr>
-
-            <tr>
-                <td>Lorem</td>
-                <td>Ipsum</td>
-                <td>email@example.com</td>
-                <td>123-456-7890</td>
-                <td>
-                    <div class="btn-group d-flex justify-content-end">
-                        <button class="btn btn-outline-primary">Edit</button>
-                        <button class="btn btn-outline-danger">Delete</button>
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
-                <td>Lorem</td>
-                <td>Ipsum</td>
-                <td>email@example.com</td>
-                <td>123-456-7890</td>
-                <td>
-                    <div class="btn-group d-flex justify-content-end">
-                        <button class="btn btn-outline-primary">Edit</button>
-                        <button class="btn btn-outline-danger">Delete</button>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
+    <div class="table-responsive-md" id="contactsTable"></div>
 </div>
 </body>
 
 </html>
+
+<!-- 
+    <button class="btn btn-outline-danger" onclick="deleteContact(index)">Delete</button>
+ -->

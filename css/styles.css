@@ -30,6 +30,24 @@
     padding: 0.5vw;
 }
 
+.logo {
+    width: 3vw;
+    height: 3vw;    
+    background-image: url("../images/logo.png");
+    filter: invert(1);
+    background:rgba(0,0,0,0.6);
+}
+
+.logo-dark {
+    width: 12.5%;
+    height: auto;
+    margin-right: 0.5vw;
+    padding: 0.5vw;
+    filter: invert(1);
+    background:rgba(0,0,0,0.6);
+}
+
+
 div.contact-list {
     padding-left: 1.3vw;
 }

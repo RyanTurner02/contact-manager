@@ -454,7 +454,7 @@ function populateTable() {
 									'<editButton class="btn btn-outline-primary" id="edit_button' + i + '" onclick="editContactPreview(' + i + ')">Edit</editButton>' +
                   '<saveButton class="btn btn-outline-primary" id="save_button' + i + '" onclick="saveEdittedContact(' + i + ')" style="display: none">Confirm</saveButton>' +
                   '<cancelButton class="btn btn-outline-danger" id="cancel_button' + i + '" onclick="populateTable()" style="display: none">Cancel</cancelButton>' +
-									'<deleteButton class="btn btn-outline-danger" id="delete_button' + i + '" onClick = "deleteContact(' + i + ')">Delete</deleteButton>' +
+									'<deleteButton class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal" id="delete_button' + i + '" onClick = "deleteContact(' + i + ')">Delete</deleteButton>' +
 								'</div>';
 		}
 		else {
@@ -469,36 +469,39 @@ function populateTable() {
 	retrieves: info of deleted contact
 */
 function deleteContact(index) {
-    let url = urlBase + '/Delete.' + extension;
-    let xhr = new XMLHttpRequest();
-    xhr.open("Post", url, true);
-    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
-    
-    let tmp = {
-        Name : contacts[index].Name,
-        Email : contacts[index].Email,
-        Phone : contacts[index].Phone,
-	      UserID : userId
-    };
-    
-  	let jsonPayload = JSON.stringify( tmp );
-	  console.log(jsonPayload);
- 
-    try {
-        xhr.onreadystatechange = function() {
-
-		    if (xhr.readyState == 4 && xhr.status == 200) {
-			            console.log("Contact has been deleted");
-                	
-                  loadContacts();
-            	}
+    let cancelButton = document.getElementById("deleteCancel");
+    let confirmationButton = document.getElementById("deleteConfirmation").addEventListener("click", function() {
+        let url = urlBase + '/Delete.' + extension;
+        let xhr = new XMLHttpRequest();
+        xhr.open("Post", url, true);
+        xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+        
+        let tmp = {
+            Name : contacts[index].Name,
+            Email : contacts[index].Email,
+            Phone : contacts[index].Phone,
+    	      UserID : userId
         };
         
-        xhr.send(jsonPayload);
-    }
-    catch (err) {
-        console.log("Error Caught: " + err);
-    }
+      	let jsonPayload = JSON.stringify( tmp );
+    	  console.log(jsonPayload);
+     
+        try {
+            xhr.onreadystatechange = function() {
+    
+    		    if (xhr.readyState == 4 && xhr.status == 200) {
+    			    console.log("Contact has been deleted");
+                    cancelButton.click();
+                    loadContacts();
+                	}
+            };
+            
+            xhr.send(jsonPayload);
+        }
+        catch (err) {
+            console.log("Error Caught: " + err);
+        } 
+    });
 }
 
 /*

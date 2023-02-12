@@ -2,7 +2,7 @@
 
 	$inData = getRequestInfo();
 
-	$searchResults = "";
+	$searchResults = array();
 	$searchCount = 0;
 
 	$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331");
@@ -18,31 +18,37 @@
 		$stmt->execute();
 
 		$result = $stmt->get_result();
-    	$searchCount = $result->num_rows;
+    	$searchCount = 0; //$result->num_rows;
+		// $ogCount = $result->num_rows;
     
 		while($row = $result->fetch_assoc() )
 		{
-      
-			if( $searchCount > 0 )
-			{
-				$searchResults .= ",";
-			}
+			$searchResults[$searchCount] = $row;
+			$searchCount++;
 			
-      		$searchCount--;
-			// $searchResults .= '"' . $row["FirstName"] . '"';
-			//"." means add
-			$searchResults .= '{"Name" : "' . $row["Name"]. '", "Phone" : "' . $row["Phone"]. '", "Email" : "' . $row["Email"]. '"}';
+
+			// if( $searchCount > 0 && $searchCount != $ogCount)
+			// {
+			// 	$searchResults .= ",";
+			// }
+			
+      		// $searchCount--;
+			// // $searchResults .= '"' . $row["FirstName"] . '"';
+			// //"." means add
+			// $searchResults .= '{"Name" : "' . $row["Name"]. '", "Phone" : "' . $row["Phone"]. '", "Email" : "' . $row["Email"]. '"}';
       		
-			if($row = $result->fetch_assoc())
-      		{
-        		returnWithInfo($searchResults);
-      		}
+			// if($row = $result->fetch_assoc())
+      		// {
+        	// 	returnWithInfo($searchResults);
+      		// }
 		}
 
-
-		if($searchCount == 0)
+		if($searchCount > 0)
 		{
-			returnWithInfo($searchResults);
+			returnWithInfo(json_encode($searchResults));
+		}
+		else {
+			returnWithError("No records found");
 		}
 		
 		//if($searchCount == 0)
@@ -78,8 +84,8 @@
 
 	function returnWithInfo( $searchResults )
 	{
-		$retValue = '{"results":[' . $searchResults . '],"error":""}';
-		sendResultInfoAsJson( $retValue );
+		// $retValue = '{"results":[' . $searchResults . '],"error":""}';
+		sendResultInfoAsJson( $searchResults );
 	}
 
 ?>

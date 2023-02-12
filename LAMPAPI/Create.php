@@ -22,70 +22,105 @@
 	if( $conn->connect_error )
 	{
 		returnWithError($conn->connect_error);
-	} else {
+	} 
+    
+    else 
+    {
         // check Name for errors
-        if($Name == "" || !filter_var($Name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[a-zA-Z\s]+$/")))) {
+        if($Name == "") 
+        {
             $errName = "Error: Invalid Name";
-        } else {
+        } 
+        
+        else 
+        {
             // Name is ok, ready to proceed further
             echo "Name added successfully";
         }
         
         // check Email for errors
-        if($Email == "") {
+        if($Email == "") 
+        {
             $errEmail = "Error: Invalid Email";     
-        } else {
+        } 
+        
+        else 
+        {
             // Email ok, move to Phone
             echo "Email added successfully";
         }
 
         // check Phone for errors
-        if($Phone == "" || !filter_var($Name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z]/")))) {
+        if($Phone == "" || !filter_var($Name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z]/")))) 
+        {
             $errPhone = "Error: Invalid Phone";     
             echo $Phone;
-        } else {
+        } 
+        
+        else 
+        {
             // phone ok, move on
             echo "Phone added successfully ";
         }
 
         // check UserID for errors
-        if($UserID == "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]+$/")))) {
-            $errUserID = "Error: Invalid UserID ";    
-        } else {
-            // UserID is ok
+        
+        if($UserID == "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]+$/")))) 
+        {
+            $errUserID = "Error: Invalid UserID "; 
+            echo "The problem is here";   
+        } 
+        
+        else 
+        {
+            //UserID is ok
             echo "UserID added successfully ";
         }
 
         // now make sure name does not exist already
+        /*
         $stmt = $conn->prepare("SELECT FROM Contacts WHERE Name = ? AND UserID = ?");
         $stmt->bind_param("si", $Name, $UserID);
-        if($stmt->exeute()) {
+        
+        if($stmt->execute()) 
+        {
+            // PROBLEM NOT HERE
             returnWithError("Contact already exists!");
+            echo "Dupe error in code";
         }
+        */
 
         // now input data into database as long as no errors
-        if( ($errName == "") && ($errEmail == "") && ($errPhone == "") && ($errUserID == "")){
+        if( ($errName == "") && ($errEmail == "") && ($errPhone == "") && ($errUserID == ""))
+        {
 
             // before we insert the contact into the DB, we should
             // first check to make sure they do not already exist
-            
+            echo "crash is before database insert";
             // SQL statement to send data to database
             $stmt = $conn->prepare("INSERT INTO Contacts(Name, Phone, Email, UserID) VALUES(?, ?, ?, ?)");
             $stmt->bind_param("sssi", $Name, $Phone, $Email, $UserID);
                 
             // add the contact to the database
-            if($stmt->execute()){
+            if($stmt->execute())
+            {
                 // contact successfully created
                 // link back to front end
                 returnWithError("");
-            } else{
+            } 
+            
+            else
+            {
                 echo "Contact data had no errors but SQL failed to add it to the database";
             }
     
             // sql call finished, go ahead and close it
             $stmt->close();
 
-        } else {
+        } 
+        
+        else 
+        {
             // data was not entered properly, so we should not send it to the database
             echo "Contact information was not entered correctly: ";
             echo $errName;

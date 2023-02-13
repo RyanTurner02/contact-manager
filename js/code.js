@@ -469,7 +469,18 @@ function populateTable() {
 	retrieves: info of deleted contact
 */
 function deleteContact(index) {
-    let cancelButton = document.getElementById("deleteCancel");
+    // user clicks outside modal
+    let confirmationModal = document.getElementById('modal');
+    confirmationModal.addEventListener('hidden.bs.modal', function (event) {
+        window.location.href = "contacts.html";
+    })
+
+    // user clicks on cancel button
+    let cancelButton = document.getElementById("deleteCancel").addEventListener("click", function() {
+        window.location.href = "contacts.html";
+    });
+    
+    // user clicks on confirm button
     let confirmationButton = document.getElementById("deleteConfirmation").addEventListener("click", function() {
         let url = urlBase + '/Delete.' + extension;
         let xhr = new XMLHttpRequest();
@@ -490,10 +501,9 @@ function deleteContact(index) {
             xhr.onreadystatechange = function() {
     
     		    if (xhr.readyState == 4 && xhr.status == 200) {
-    			    console.log("Contact has been deleted");
-                    cancelButton.click();
-                    loadContacts();
-                	}
+    			      console.log("Contact has been deleted");
+                window.location.href = "contacts.html";
+                }
             };
             
             xhr.send(jsonPayload);

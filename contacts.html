@@ -43,7 +43,6 @@
         <div class="col-md-9 col-lg-8 col-12">
           <div class="d-flex justify-content-around" role="search">
               <input class="form-control me-2" type="text" placeholder="Search" aria-label="Search" id="searchBar" onkeyup="searchContacts(this)">
-              <button type="button" class="btn btn-outline-success" onClick="searchContacts()">Search</button>
               <button id="toRefreshSpace" type="button" class="btn btn-outline-success" onClick="refreshContacts()">Refresh</button>
               <script>
                 document.getElementById("toRefreshSpace").id = 'refreshSpacer';
@@ -80,6 +79,12 @@
     <div class="table-responsive-md" id="contactsTable"></div>
 </div>
 
+<div id="showMoreLess" class="container-fluid">
+  <button class="btn btn-outline-primary" onClick="increaseLoadAmount()">Show More</button>
+	<button class="btn btn-outline-primary" onClick="decreaseLoadAmount()">Show Less</button>
+</div>
+<p id="maxShown">Max Number of Contacts Displayed: 10</p>
+
 <div class="modal fade" id="modal">
 	<div class="modal-dialog modal-dialog-centered">
 		<div class="modal-content">
@@ -93,7 +98,7 @@
 			
 			<div class="modal-footer">
 				<button class="btn btn-outline-primary" id="deleteCancel" data-bs-dismiss="modal" data-bs-target="#modal">No</button>
-				<button class="btn btn-outline-danger" id="deleteConfirmation">Yes</button>
+				<button class="btn btn-outline-danger" id="deleteConfirmation">Yes</button>'
 			</div>
 		</div>
 	</div>

@@ -51,31 +51,31 @@
         }
 
         // check Phone for errors
-        if($Phone == "" || !filter_var($Name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z]/")))) 
-        {
-            $errPhone = "Error: Invalid Phone";     
-            echo $Phone;
-        } 
+        //if($Phone == "" || !filter_var($Name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z]/")))) 
+        //{
+           // $errPhone = "Error: Invalid Phone";     
+           // echo $Phone;
+        //} 
         
-        else 
-        {
+        //else 
+        //{
             // phone ok, move on
-            echo "Phone added successfully ";
-        }
+            //echo "Phone added successfully ";
+        //}
 
         // check UserID for errors
         
-        if($UserID == "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]+$/")))) 
-        {
-            $errUserID = "Error: Invalid UserID "; 
-            echo "The problem is here";   
-        } 
+        //if($UserID == "" || !filter_var($UserID, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/[1-9]+$/")))) 
+        //{
+            //$errUserID = "Error: Invalid UserID "; 
+            //echo "The problem is here";   
+        //} 
         
-        else 
-        {
+       // else 
+        //{
             //UserID is ok
-            echo "UserID added successfully ";
-        }
+            //echo "UserID added successfully ";
+       // }
 
         // now make sure name does not exist already
         /*

@@ -5,6 +5,7 @@ let userId = 0;
 let firstName = "";
 let lastName = "";
 let contacts;
+let ammountToLoad = 10;
 
 /*
 	description: logs user in to the Contact manager app.
@@ -74,7 +75,73 @@ function doRegister() {
 	let login = document.getElementById("username").value;
 	let password = document.getElementById("password").value;
 
-	// todo: input validation
+	let firstName_in = document.getElementById("firstname");
+	let lastName_in = document.getElementById("lastname");
+	let login_in = document.getElementById("username");
+	let password_in = document.getElementById("password");
+
+	// Regex for validation
+	const validName = /^([a-zA-Z])/;
+
+	let validFields = true;
+
+	// Validation Checks
+	/// First Name Validation
+	if (firstName == "" ) {
+		console.log("Empty First Name");
+		firstName_in.className = "incorrect";
+		firstName_in.placeholder = "Empty First Name";
+		validFields = false;
+	}
+	else if (!validName.test(firstName)) {
+		console.log("invalid First Name");
+		firstName_in.text = "";
+		firstName_in.className = "incorrect";
+		firstName_in.placeholder = "Invalid First Name";
+		validFields = false;
+	}
+	else {
+		firstName_in.placeholder = "First Name";
+		firstName_in.className = "form-control";
+	}
+
+	/// Last Name Validation
+	if (lastName == "" ) {
+		console.log("Empty Last Name");
+		lastName_in.className = "incorrect";
+		lastName_in.placeholder = "Empty Last Name";
+		validFields = false;
+	}
+	else if (!validName.test(lastName)) {
+		console.log("invalid Email");
+		lastName_in.className = "incorrect";
+		lastName_in.placeholder = "Invalid Last Name";
+		validFields = false;
+	}
+	else {
+		lastName_in.placeholder = "Last Name";
+		lastName_in.className = "form-control";
+	}
+
+	/// Email Validation
+	if (login == "" ) {
+		console.log("Empty login");
+		login_in.className = "incorrect";
+		login_in.placeholder = "Empty Username";
+		validFields = false;
+	}
+
+	/// Phone Number Validation
+	if (password.length < 4) {
+		console.log("Invalid Password");
+		password_in.value = "";
+		password_in.className = "incorrect";
+		password_in.placeholder = "Password Is Too Short";
+		validFields = false;
+	}
+
+	if(!validFields) 
+		return ;
 
 	let user = {
 		firstName: firstName,
@@ -185,107 +252,19 @@ function doLogout()
 	retrieves: new Contact
 */
 function addContact() {
-	// Regex for validation
-	const validName = /^([a-zA-Z])/;
-	const validEmail = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
-	const validPhone = /^[0-9]/;
-
 	// getting input from input feilds in the html
-    let firstName_in = document.getElementById("contactTextFirst");
-    let lastName_in = document.getElementById("contactTextLast");
-    let phoneNumber_in = document.getElementById("contactTextNumber");
-    let emailAddress_in = document.getElementById("contactTextEmail");
+	let firstName_in = document.getElementById("contactTextFirst");
+	let lastName_in = document.getElementById("contactTextLast");
+	let phoneNumber_in = document.getElementById("contactTextNumber");
+	let emailAddress_in = document.getElementById("contactTextEmail");
+	
+	if(!validateFields(firstName_in, lastName_in, emailAddress_in, phoneNumber_in))
+		return;
 
 	let firstName = firstName_in.value;
 	let lastName = lastName_in.value;
-	let phoneNumber = phoneNumber_in.value;
+	let phoneNumber = formatPhone(phoneNumber_in.value);
 	let emailAddress = emailAddress_in.value;
-
-	let validFields = true;
-	
-	// Validation Checks
-	/// First Name Validation
-	if (firstName == "" ) {
-		console.log("Empty First Name");
-		firstName_in.className = "incorrect";
-		firstName_in.placeholder = "Empty First Name";
-		validFields = false;
-	}
-    else if (!validName.test(firstName)) {
-		console.log("invalid First Name");
-		firstName_in.text = "";
-		firstName_in.className = "incorrect";
-		firstName_in.placeholder = "Invalid First Name";
-		validFields = false;
-	}
-	else {
-		firstName_in.placeholder = "First Name";
-		firstName_in.className = "form-control";
-	}
-
-	/// Last Name Validation
-	if (lastName == "" ) {
-		console.log("Empty Last Name");
-		lastName_in.className = "incorrect";
-		lastName_in.placeholder = "Empty Last Name";
-		validFields = false;
-	}
-    else if (!validName.test(lastName)) {
-		console.log("invalid Email");
-		lastName_in.className = "incorrect";
-		lastName_in.placeholder = "Invalid Last Name";
-		validFields = false;
-	}
-	else {
-		lastName_in.placeholder = "Last Name";
-		lastName_in.className = "form-control";
-	}
-
-	/// Email Validation
-	if (emailAddress == "" ) {
-		console.log("Empty Email");
-		emailAddress_in.className = "incorrect";
-		emailAddress_in.placeholder = "Empty Email Address";
-		validFields = false;
-	}
-    else if (!validEmail.test(emailAddress)) {
-		console.log("invalid Email");
-		emailAddress_in.className = "incorrect";
-		emailAddress_in.placeholder = "Invalid Email Address";
-		validFields = false;
-	}
-	else {
-		emailAddress_in.placeholder = "name@email.com";
-		emailAddress_in.className = "form-control";
-	}
-
-	/// Phone Number Validation
-	if (phoneNumber == "" ) {
-		console.log("Empty Phone Number");
-		phoneNumber_in.className = "incorrect";
-		phoneNumber_in.placeholder = "Empty Phone Number";
-		validFields = false;
-	}
-    else if (!validPhone.test(phoneNumber)) {
-		console.log("Invalid Phone Number (digits)");
-		phoneNumber_in.className = "incorrect";
-		phoneNumber_in.placeholder = "Only use digits 0-9";
-		validFields = false;
-	}
-	else if (phoneNumber.length != 10) {
-		console.log("Invalid Phone Number (length)");
-		phoneNumber_in.className = "incorrect";
-		phoneNumber_in.placeholder = "Must only contain 10 digits";
-		validFields = false;
-	}
-	else {
-		phoneNumber_in.placeholder = "(XXX) XXX-XXX";
-		phoneNumber_in.className = "form-control";
-	}
-
-	// Checks if any of the validation checks were unsuccessful
-	if (!validFields)
-		return;
 
     let tmp = {
         Name: firstName + "_" + lastName,
@@ -343,8 +322,10 @@ function loadContacts()
 	xhr.open("POST", url, true);
 	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
  
+	console.log(ammountToLoad);
  	let tmp = {
-   UserID: userId
+   UserID: userId,
+   ContactNumber: ammountToLoad
   };
   
 	let jsonPayload = JSON.stringify( tmp );
@@ -395,8 +376,8 @@ function populateTable() {
 
 	
 	document.getElementById("contactsTable").appendChild(table);
-
-	if (contacts.construtor !== Array && contacts.id == 0 && contacts.firstName == '') {
+	console.log("Got to Line 313");
+	if (contacts.length && contacts.id == 0 && contacts.firstName == '') {
 		let errorRow = table.insertRow(1);
 
 		for (let i = 0; i < 5; i++)
@@ -409,10 +390,11 @@ function populateTable() {
 		return;
 	}
 
-	let length = (contacts.length < 10) ? contacts.length : 10;
+	let length = (contacts.length < ammountToLoad) ? contacts.length : ammountToLoad;
 	for (let i = 0; i < length; i++) {
 		if (contacts[i] != null) {
 			let row = table.insertRow(i + 1);
+			console.log(contacts[i].Name + contacts.length);
 			let name = contacts[i].Name.split("_");
 
 			let fname;
@@ -531,7 +513,8 @@ function searchContacts() {
 
 	let tmp = {
 		Name : name,
-  		UserID: userId
+  		UserID: userId,
+		ContactNumber: ammountToLoad
  	};
  
    let jsonPayload = JSON.stringify( tmp );
@@ -603,12 +586,23 @@ function editContactPreview(index) {
 
 // Do the actual updating of the contact once the save button has been pressed
 function saveEdittedContact(index) {
+	let fname = document.getElementById("fUpdate" + index);
+	let lname = document.getElementById("lUpdate" + index);
+	let email = document.getElementById("eUpdate" + index);
+	let phone = document.getElementById("pUpdate" + index);
 
-    var fname_val = document.getElementById("fUpdate" + index).value;
-    var lname_val = document.getElementById("lUpdate" + index).value;
-    var email_val = document.getElementById("eUpdate" + index).value;
-    var phone_val = document.getElementById("pUpdate" + index).value;
-       
+	let valid = validateFields(fname, lname, email, phone);
+	console.log(valid);
+
+	if(!valid)
+		return ;
+
+    var fname_val = fname.value;
+    var lname_val = lname.value;
+    var email_val = email.value;
+    var phone_val = formatPhone(phone.value);
+
+	console.log(phone_val);
     // Recombine the name
     var fullName = fname_val + "_" + lname_val;
     
@@ -645,7 +639,150 @@ function saveEdittedContact(index) {
     }
 }
 
+function validateFields(firstName_in, lastName_in, emailAddress_in, phoneNumber_in) {
+	// Regex for validation
+	const validName = /^([a-zA-Z])/;
+	const validEmail = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
+	const validPhone = /^[0-9]/;
 
+	let firstName = firstName_in.value;
+	let lastName = lastName_in.value;
+	let phoneNumber = phoneNumber_in.value;
+	let emailAddress = emailAddress_in.value;
+
+	let validFields = true;
+
+	// Validation Checks
+	/// First Name Validation
+	if (firstName == "" ) {
+		console.log("Empty First Name");
+		firstName_in.className = "incorrect";
+		firstName_in.placeholder = "Empty First Name";
+		validFields = false;
+	}
+	else if (!validName.test(firstName)) {
+		console.log("invalid First Name");
+		firstName_in.text = "";
+		firstName_in.className = "incorrect";
+		firstName_in.placeholder = "Invalid First Name";
+		validFields = false;
+	}
+	else {
+		firstName_in.placeholder = "First Name";
+		firstName_in.className = "form-control";
+	}
+
+	/// Last Name Validation
+	if (lastName == "" ) {
+		console.log("Empty Last Name");
+		lastName_in.className = "incorrect";
+		lastName_in.placeholder = "Empty Last Name";
+		validFields = false;
+	}
+	else if (!validName.test(lastName)) {
+		console.log("invalid Email");
+		lastName_in.className = "incorrect";
+		lastName_in.placeholder = "Invalid Last Name";
+		validFields = false;
+	}
+	else {
+		lastName_in.placeholder = "Last Name";
+		lastName_in.className = "form-control";
+	}
+
+	/// Email Validation
+	if (emailAddress == "" ) {
+		console.log("Empty Email");
+		emailAddress_in.className = "incorrect";
+		emailAddress_in.placeholder = "Empty Email Address";
+		validFields = false;
+	}
+	else if (!validEmail.test(emailAddress)) {
+		console.log("invalid Email");
+		emailAddress_in.value = "";
+		emailAddress_in.className = "incorrect";
+		emailAddress_in.placeholder = "Invalid Email Address";
+		validFields = false;
+	}
+	else {
+		emailAddress_in.placeholder = "name@email.com";
+		emailAddress_in.className = "form-control";
+	}
+
+	/// Phone Number Validation
+	phoneNumber = formatPhone(phoneNumber);
+	if (phoneNumber == "" ) {
+		console.log("Empty Phone Number");
+		phoneNumber_in.className = "incorrect";
+		phoneNumber_in.placeholder = "Empty Phone Number";
+		validFields = false;
+	}
+	else if (!validPhone.test(phoneNumber)) {
+		console.log("Invalid Phone Number (digits)");
+		phoneNumber_in.value = "";
+		phoneNumber_in.className = "incorrect";
+		phoneNumber_in.placeholder = "Only use digits 0-9";
+		validFields = false;
+	}
+	else if (phoneNumber.length != 10) {
+		console.log("Invalid Phone Number (length)");
+		phoneNumber_in.value = "";
+		phoneNumber_in.className = "incorrect";
+		phoneNumber_in.placeholder = "Must only contain 10 digits";
+		validFields = false;
+	}
+	else {
+		phoneNumber_in.placeholder = "(XXX) XXX-XXX";
+		phoneNumber_in.className = "form-control";
+	}
+
+	// Checks if any of the validation checks were unsuccessful
+	return validFields;
+}
+
+function formatPhone(phone) {
+	phone = phone.trim();
+	let retVal = "";
+	for(let i = 0; i < phone.length; i++) {
+	  let char = phone.charAt(i);
+	  if (char >= '0' && char <= '9') {
+		retVal += char;
+	  }
+	}
+
+	return retVal;
+}
+
+function increaseLoadAmount() {
+	ammountToLoad += 5;
+	console.log("ammountToLoad = " + ammountToLoad);
+	showMoreLess();
+}
+
+function decreaseLoadAmount() {
+	ammountToLoad -= 5;
+	console.log("ammountToLoad = " + ammountToLoad);
+	showMoreLess();
+}
+
+function showMoreLess () {
+	let div = document.getElementById("showMoreLess");
+	div.innerHTML = '';
+	if (ammountToLoad <= 5) {
+		div.innerHTML = '<button class="btn btn-outline-primary" onClick="increaseLoadAmount()">Show More</button>';
+	}
+	else {
+		div.innerHTML = '<button class="btn btn-outline-primary" onClick="increaseLoadAmount()">Show More</button>' +
+						'<button class="btn btn-outline-primary" onClick="decreaseLoadAmount()">Show Less</button>';
+	}
+
+	document.getElementById("maxShown").innerHTML = "Max Number of Contacts Displayed: " + ammountToLoad;
+
+	if (document.getElementById("searchBar").value == "")
+		loadContacts();
+	else
+		searchContacts();
+}
 ////////////// Leineker Code /////////////////
 // function addColor()
 // {
